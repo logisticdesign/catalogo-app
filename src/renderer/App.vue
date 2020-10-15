@@ -1,11 +1,12 @@
 <template>
     <div id="app">
-        <div
-            v-if="message"
-            v-html="message"
+        <div class="absolute top-0 inset-x-0 bg-gray-800 text-white px-6 py-2 text-sm flex items-center justify-between">
+            <div>
+                <div v-if="message" v-html="message"></div>
+            </div>
 
-            class="bg-gray-800 text-white px-6 py-2 text-sm"
-        ></div>
+            <div>Versione {{ version }}</div>
+        </div>
 
         <router-view></router-view>
     </div>
@@ -17,9 +18,12 @@
         data() {
             return {
                 message: null,
+                version: null,
             }
         },
         created() {
+            this.version = this.$electron.remote.app.getVersion()
+
             // Intercetto i Token scaduti
             this.$http.interceptors.response.use(undefined, ({ response }) => {
                 if (response.status === 401 && response.config && !response.config.__isRetryRequest) {
@@ -28,8 +32,6 @@
             });
 
             this.$electron.ipcRenderer.on('message', (e, message) => {
-                console.log(message);
-
                 this.message = message
             })
         }

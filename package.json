@@ -1,6 +1,6 @@
 {
   "name": "catalogo-app",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "Davide Bellini <bellini.davide@gmail.com>",
   "description": "An electron-vue project",
   "license": null,
@@ -15,7 +15,7 @@
     "pack:main": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.main.config.js",
     "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.renderer.config.js",
     "postinstall": "",
-    "release":"electron-builder -p always"
+    "release":"electron-builder build --mac --publish always"
   },
   "build": {
     "productName": "catalogo-app",
