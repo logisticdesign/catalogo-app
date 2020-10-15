@@ -1,5 +1,5 @@
 import { autoUpdater } from 'electron-updater'
-import { app, BrowserWindow, ipcMain, protocol } from 'electron'
+import { app, BrowserWindow, protocol } from 'electron'
 
 /**
 * Set `__static` path to static files in production
