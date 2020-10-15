@@ -1,3 +1,4 @@
+import { autoUpdater } from 'electron-updater'
 import { app, BrowserWindow, protocol } from 'electron'
 
 /**
@@ -27,6 +28,9 @@ function createWindow () {
     // Protocollo per consentire il caricamento dei file locali.
     // Chrome blocca il caricamento degli url con protocollo file:// per motivi di sicurezza.
     localFileProtocol('local')
+
+    // Apri DevTools al caricamento
+    // mainWindow.webContents.openDevTools();
 
     mainWindow.loadURL(winURL)
 
@@ -71,26 +75,24 @@ app.on('activate', () => {
 * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-electron-builder.html#auto-updating
 */
 
-import { autoUpdater } from 'electron-updater'
-
 autoUpdater.on('checking-for-update', () => {
-    console.log('Checking for update...');
+    mainWindow.webContents.send('message', 'Checking for update...')
 })
 autoUpdater.on('update-available', (info) => {
-    console.log('Update available.');
+    mainWindow.webContents.send('message', 'Update available.');
 })
 autoUpdater.on('update-not-available', (info) => {
-    console.log('Update not available.');
+    mainWindow.webContents.send('message', 'Update not available.');
 })
 autoUpdater.on('error', (err) => {
-    console.log('Error in auto-updater. ' + err);
+    mainWindow.webContents.send('message', 'Error in auto-updater. ' + err);
 })
 autoUpdater.on('download-progress', (progressObj) => {
     let log_message = "Download speed: " + progressObj.bytesPerSecond;
     log_message = log_message + ' - Downloaded ' + progressObj.percent + '%';
     log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')';
 
-    console.log(log_message);
+    mainWindow.webContents.send('message', log_message);
 })
 
 autoUpdater.on('update-downloaded', () => {
@@ -98,5 +100,9 @@ autoUpdater.on('update-downloaded', () => {
 })
 
 app.on('ready', () => {
-    if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
+    if (process.env.NODE_ENV === 'production') {
+        mainWindow.webContents.on('did-finish-load', () => {
+            autoUpdater.checkForUpdates()
+        })
+    }
 })
